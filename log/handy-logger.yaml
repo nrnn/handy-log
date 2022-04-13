@@ -3,9 +3,10 @@ handy-logger:
   style: "{"
 formatters:
   simple:
-    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format: "{asctime} {threadName}-{thread} {levelname}: ========== {message}"
+    style: "{"
   detail:
-    format: "{asctime} {name} {levelname:8s} {thread:6d}-{threadName} [{pathname}:{lineno}] ===== {message}"
+    format: "{asctime} {processName}:{process} {threadName}-{thread} {name}:{pathname}:{lineno:03d} {levelname}: ========== {message}"
     style: "{"
 handlers:
   console_simple:
@@ -19,13 +20,10 @@ handlers:
     formatter: detail
     stream: ext://sys.stdout
 loggers:
-  simple:
-    level: DEBUG
+  log:
+    level: INFO
     handlers: [console_simple]
     propagate: no
-  logger_module:
-    level: DEBUG
-    handlers: [console_simple]
 root:
-  level: DEBUG
+  level: INFO
   handlers: [console_detail]
