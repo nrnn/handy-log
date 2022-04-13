@@ -1,23 +1,42 @@
 # -*- coding: utf-8 -*-
 import pprint
 import logging
+import sys
+from pathlib import Path
 
-from .utils import get_caller_module_name, load_yaml_to_dict
+from .utils import get_caller_module_name, load_yaml_to_dict, update_dict_recursively
 from .decorators import cache_return
 
 C = None
 HANDY_LOGGER_KEY = "handy-logger"
 DEFAULT_STYLE = "{"
+DEFAULT_CONFIG_PATH = Path(Path(sys.modules[__name__].__file__).parent, "{}.yaml".format(HANDY_LOGGER_KEY)).absolute()
+USER_CONFIG_PATH = Path(Path(), "{}.yaml".format(HANDY_LOGGER_KEY)).absolute()
 
 
 def init(config_path=None, encoding="utf-8"):
     global C
-    C = load_yaml_to_dict(config_path, encoding=encoding)
+    C = load_yaml_to_dict(DEFAULT_CONFIG_PATH, encoding="utf-8")
+
+    if config_path is None:
+        if USER_CONFIG_PATH.exists():
+            config_path = USER_CONFIG_PATH
+    else:
+        config_path = Path(config_path).absolute()
+        assert config_path.exists(), "The specified log config file does not exist: {}".format(config_path)
+
+    if config_path is not None:
+        user_config = load_yaml_to_dict(config_path, encoding=encoding)
+        update_dict_recursively(C, user_config)
+
     import logging.config
     logging.config.dictConfig(C)
-    info("{} initialized!", HANDY_LOGGER_KEY, pprint.pformat(C))
-    info("{} CONFIG:\n{}", HANDY_LOGGER_KEY, pprint.pformat(C))
-    info("{} CONFIG END", HANDY_LOGGER_KEY)
+    info("{} initialized! Configured by:", HANDY_LOGGER_KEY)
+    info("Default  config file: {}", DEFAULT_CONFIG_PATH)
+    if config_path is not None:
+        info("And user config file: {}", config_path)
+    debug("CONFIG DETAIL start:\n{}", pprint.pformat(C))
+    debug("CONFIG DETAIL end here.")
 
 
 def _assert_initialized():

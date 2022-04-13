@@ -1,29 +1,3 @@
-version: 1
-handy-logger:
-  style: "{"
-formatters:
-  simple:
-    format: "{asctime} {threadName}-{thread} {levelname}: ========== {message}"
-    style: "{"
-  detail:
-    format: "{asctime} {processName}:{process} {threadName}-{thread} {name}:{pathname}:{lineno:03d} {levelname}: ========== {message}"
-    style: "{"
-handlers:
-  console_simple:
-    class: logging.StreamHandler
-    level: DEBUG
-    formatter: simple
-    stream: ext://sys.stdout
-  console_detail:
-    class: logging.StreamHandler
-    level: DEBUG
-    formatter: detail
-    stream: ext://sys.stdout
 loggers:
-  handy_logger:
+  log:
     level: INFO
-    handlers: [console_simple]
-    propagate: no
-root:
-  level: INFO
-  handlers: [console_detail]

@@ -1,4 +1,4 @@
-import handy_logger as hl
+import log
 
-hl.init("handy-logger.yaml")
-hl.info("Hello {}", "boy")
+log.init()
+log.info("Hello {}", "boy")

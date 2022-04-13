@@ -32,3 +32,25 @@ def get_caller_module_name(stacklevel=1):
 def load_yaml_to_dict(yaml_path, encoding="utf-8"):
     with open(yaml_path, 'r', encoding=encoding) as f:
         return yaml.safe_load(f.read())
+
+
+def update_dict_recursively(dict_origin, dict_update, visited_obj=None):
+    assert isinstance(dict_origin, dict) and isinstance(dict_update, dict)
+
+    if visited_obj is None:
+        visited_obj = set()
+    else:
+        if id(dict_origin) in visited_obj:
+            return
+
+    visited_obj.add(id(dict_origin))
+
+    for k, v in dict_update.items():
+        if k not in dict_origin:
+            dict_origin[k] = v
+        else:
+            origin_value = dict_origin[k]
+            if isinstance(origin_value, dict) and isinstance(v, dict):
+                update_dict_recursively(origin_value, v)
+            else:
+                dict_origin[k] = v
