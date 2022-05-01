@@ -8,10 +8,11 @@ from .utils import get_caller_module_name, load_yaml_to_dict, update_dict_recurs
 from .decorators import cache_return
 
 C = None
-HANDY_LOGGER_KEY = "handy-logger"
+HANDY_LOG_KEY = "handy-log"
 DEFAULT_STYLE = "{"
-DEFAULT_CONFIG_PATH = Path(Path(sys.modules[__name__].__file__).parent, "{}.yaml".format(HANDY_LOGGER_KEY)).absolute()
-USER_CONFIG_PATH = Path(Path(), "{}.yaml".format(HANDY_LOGGER_KEY)).absolute()
+DEFAULT_CONFIG_PATH = Path(Path(sys.modules[__name__].__file__).parent, "{}.yaml".format(HANDY_LOG_KEY)).absolute()
+SAMPLE_CONFIG_PATH = Path(Path(sys.modules[__name__].__file__).parent, "{}-sample.yaml".format(HANDY_LOG_KEY)).absolute()
+USER_CONFIG_PATH = Path(Path(), "{}.yaml".format(HANDY_LOG_KEY)).absolute()
 
 
 def init(config_path=None, encoding="utf-8"):
@@ -31,24 +32,26 @@ def init(config_path=None, encoding="utf-8"):
 
     import logging.config
     logging.config.dictConfig(C)
-    info("{} initialized! Configured by:", HANDY_LOGGER_KEY)
-    info("Default  config file: {}", DEFAULT_CONFIG_PATH)
+    info("{} initialized! Configured by:", HANDY_LOG_KEY)
+    info("Default config file: {}", DEFAULT_CONFIG_PATH)
     if config_path is not None:
         info("And user config file: {}", config_path)
+    else:
+        info("Refer here as a sample config: {}", SAMPLE_CONFIG_PATH)
     debug("CONFIG DETAIL start:\n{}", pprint.pformat(C))
     debug("CONFIG DETAIL end here.")
 
 
-def _assert_initialized():
-    assert isinstance(C, dict), \
-        "{} has not been initialized. " \
-        "You may need to call {}.init() first".format(HANDY_LOGGER_KEY, HANDY_LOGGER_KEY)
+def _init_if_necessary():
+    if isinstance(C, dict):
+        return
+    init()
 
 
 @cache_return
 def _get_style():
-    _assert_initialized()
-    style = C.get(HANDY_LOGGER_KEY, {}).get("style", DEFAULT_STYLE)
+    _init_if_necessary()
+    style = C.get(HANDY_LOG_KEY, {}).get("style", DEFAULT_STYLE)
     assert style in ["{", "%"], "Message format style can only be '{' or '%', " \
                                 "now it's: {}".format(style)
     return style
@@ -71,6 +74,7 @@ def _log(level, msg, *args, **kwargs):
     Difficult to support: 'msg.format(*args, **kwargs)'.
     This requires to pop all the keys from kwargs which have been exhausted by msg.
     """
+    _init_if_necessary()
     module_name, _ = get_caller_module_name(stacklevel=2)
     logger = logging.getLogger(module_name)
     msg = _pre_format_msg(msg, *args)
