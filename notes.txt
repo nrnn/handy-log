@@ -1,7 +1,0 @@
-# https://packaging.python.org/en/latest/tutorials/packaging-projects/
-
-pip install --upgrade pip
-pip install --upgrade build
-python -m build
-pip install --upgrade twine
-python -m twine upload

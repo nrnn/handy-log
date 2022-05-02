@@ -1,5 +1,0 @@
-loggers:
-
-  log:
-    level: DEBUG
-    handlers: [console_stderr_simple=]

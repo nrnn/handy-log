@@ -1,0 +1,8 @@
+loggers:
+
+  log:
+    level: DEBUG
+    handlers: [console_simple=]
+root:
+  level: DEBUG
+  handlers: [console_simple=]

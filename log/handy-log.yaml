@@ -100,4 +100,4 @@ loggers:
 
 root:
   level: INFO
-  handlers: [console_stderr_simple]
+  handlers: [console_simple]
