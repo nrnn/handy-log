@@ -14,7 +14,10 @@ log.info("Hello handy-log!")
 
 # Mechanism
 1. This is a wrapper for python builtin `logging` system.
-2. Use yaml to config the logging system.
+2. Load yaml to dict, then use the `logging.config.dictConfig(config_dict)` to configure the logging system.
+3. When you invoke `log.info(msg)`, `handy-log` will first find `current module`'s logger, 
+and then use this `logger` to log the message. Here `current module` means the module inside which
+you invoke the `log.info(msg)`. 
 
 # Configuration/How to use
 * Option 1:  
@@ -36,3 +39,8 @@ Do nothing, use the default configuration. Just `import log` and use it.
 you should invoke `log.init()` before any other logger configuration takes effect.  
 * In the configuration file, loggers and handlers have their independent `logging level`,
 The message needs to pass through all these `level` to be recorded.
+
+# References
+* [How to package projects](https://packaging.python.org/en/latest/tutorials/packaging-projects/)
+* [Configuring setuptools using setup.cfg files](https://setuptools.pypa.io/en/latest/userguide/declarative_config.html#configuring-setuptools-using-setup-cfg-files)
+* [Basic writing and formatting syntax](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax)
